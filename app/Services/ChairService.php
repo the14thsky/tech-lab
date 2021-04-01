@@ -21,9 +21,10 @@ class ChairService
 
 		$existed = Chair::where('chair_slug',$chair_slug)->first();
 
-		$diff = collect($existed->body)->diffAssoc($body);
+		if($existed) $diff = collect($existed->body)->diffAssoc($body);
+		else $diff = collect();
 
-		if($existed->chair_name != $name || $diff->isNotEmpty() || $existed == null){
+		if($diff->isNotEmpty() || $existed == null){
 			$chair = new Chair;
 			$chair->chair_name = $name;
 			$chair->chair_slug = $chair_slug;
@@ -45,7 +46,7 @@ class ChairService
 		]);
 
 		if($request->route('name') == 'get-all-records'){
-			return ['status' => 'ok', 'code' => 200, 'data' => Chair::all(), 'message' => 'sent'];
+			return ['status' => 'ok', 'code' => 200, 'data' => Chair::all(), 'message' => 'data_received'];
 		}
 
 		validate($request->all(),[
@@ -68,6 +69,6 @@ class ChairService
 			$data = Arr::get($chair->body,$request->input('body_key'));
 		}
 
-		return ['status' => 'ok', 'code' => 200, 'data' => $data, 'message' => 'sent'];
+		return ['status' => 'ok', 'code' => 200, 'data' => $data, 'message' => 'data_received'];
 	}
 }
